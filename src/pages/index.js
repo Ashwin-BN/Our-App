@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import FloatingMenu from "../components/FloatingMenu";
+import FloatingMenu from "@/components/Navbar";
 import { useSession, signIn } from "next-auth/react";
 
 export default function Home() {
