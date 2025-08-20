@@ -1,5 +1,5 @@
 import formidable from "formidable";
-import cloudinary from "@/";
+import cloudinary from "@/lib/cloudinary";
 import { PrismaClient } from "@prisma/client";
 
 export const config = {
