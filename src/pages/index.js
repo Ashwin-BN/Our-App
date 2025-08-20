@@ -14,6 +14,12 @@ export default function Home() {
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
 
+  useEffect(() => {
+  showLoader("Testing MacBook loader...");
+  const timer = setTimeout(() => hideLoader(), 90000); // Hide after 5s
+  return () => clearTimeout(timer);
+}, [showLoader, hideLoader]);
+
 
   // Manage loader based on session status
   useEffect(() => {

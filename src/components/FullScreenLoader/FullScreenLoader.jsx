@@ -21,6 +21,7 @@ export default function FullScreenLoader({ message = "Loading..." }) {
       }}
     >
       <MacbookLoader />  {/* render the component */}
+      <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
       <p style={{ marginTop: "20px", fontSize: "16px", color: "#555" }}>{message}</p>
     </div>
   );
