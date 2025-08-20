@@ -1,62 +1,63 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import FloatingMenu from "@/components/Navbar";
-import { useSession, signIn } from "next-auth/react";
+import React, { useEffect } from "react";
+import VantaBackground from "@/components/CloudBackground/CloudBackground";
+import FloatingMenu from "@/components/Navbar/Navbar";
+import ProfileMenu from "@/components/ProfileMenu/ProfileMenu";
+import FancyButton from "@/components/HomeButton/FancyButton";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useLoading } from "@/context/LoadingContext";
 
 export default function Home() {
-  const { data: session } = useSession();
-  const vantaRef = useRef(null);
-  const [vantaEffect, setVantaEffect] = useState(null);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { showLoader, hideLoader } = useLoading();
 
+
+  // Manage loader based on session status
   useEffect(() => {
-    if (!session) signIn(); // Redirect to login if not authenticated
-  }, [session]);
+    if (status === "loading") {
+      showLoader("Checking session...");
+    } else {
+      hideLoader();
+    }
 
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router, showLoader, hideLoader]);
+
+  // Redirect to set-password if user has no password
   useEffect(() => {
-    const loadVanta = async () => {
-      if (!window.THREE) {
-        const threeScript = document.createElement("script");
-        threeScript.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js";
-        document.body.appendChild(threeScript);
-        await new Promise((res) => (threeScript.onload = res));
-      }
-      if (!window.VANTA) {
-        const vantaScript = document.createElement("script");
-        vantaScript.src = "https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.clouds.min.js";
-        document.body.appendChild(vantaScript);
-        await new Promise((res) => (vantaScript.onload = res));
-      }
-      if (window.VANTA && !vantaEffect) {
-        setVantaEffect(
-          window.VANTA.CLOUDS({
-            el: vantaRef.current,
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 1000,
-            minWidth: 200,
-            backgroundColor: 0xffffff,
-            skyColor: 0x68b8d7,
-            cloudColor: 0xadc1de,
-            cloudShadowColor: 0x183550,
-            sunColor: 0xff9919,
-            sunGlareColor: 0xff6633,
-            sunlightColor: 0xff9933,
-            speed: 0.8,
-          })
-        );
-      }
-    };
-    loadVanta();
-    return () => vantaEffect && vantaEffect.destroy();
-  }, [vantaEffect]);
+    if (status === "authenticated" && session?.user && !session.user.hasPassword) {
+      showLoader("Redirecting to set password...");
+      router.push("/set-password");
+    }
+  }, [status, session, router, showLoader]);
 
-  if (!session) return null; // Don't render until logged in
+  // Save access token
+  useEffect(() => {
+    if (status === "authenticated" && session?.accessToken) {
+      showLoader("Saving access token...");
+      localStorage.setItem(
+        "access_token",
+        JSON.stringify({
+          token: session.accessToken,
+          expires: session.accessTokenExpires,
+        })
+      );
+      hideLoader();
+    }
+  }, [status, session, showLoader, hideLoader]);
+
+  // Do not render content until session.user exists
+  if (!session?.user) return null;
 
   return (
-    <div ref={vantaRef} style={{ width: "100vw", height: "100vh" }}>
+    <VantaBackground>
       <FloatingMenu />
+      <ProfileMenu user={session.user} />
       <div
         style={{
           position: "absolute",
@@ -67,9 +68,13 @@ export default function Home() {
           color: "#333",
         }}
       >
-        <h1>Welcome, {session.user.name || session.user.email}!</h1>
-        <p>Enjoy this interactive cloud background ☁️🌅</p>
+        <h1 className="welcome-text">Hey, {session.user.name || session.user.email}!</h1>
+        <div className="d-flex flex-column flex-md-row gap-3 mt-4">
+          <FancyButton label="Album" to="/album" />
+          <FancyButton label="Letters" to="/letters" />
+          <FancyButton label="Map" to="/map" />
+        </div>
       </div>
-    </div>
+    </VantaBackground>
   );
 }

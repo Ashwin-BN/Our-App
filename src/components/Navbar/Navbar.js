@@ -1,11 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link"; 
+import { ArrowLeft } from "lucide-react";
 import styles from "./Navbar.module.css";
 
 export default function FloatingMenu() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -17,28 +22,29 @@ export default function FloatingMenu() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  if (pathname !== "/") {
+    return (
+      <div className={styles.floatingContainer}>
+        <div className={styles.menuIcon} onClick={() => router.back()}>
+          <ArrowLeft size={24} strokeWidth={2.5} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div ref={menuRef} className={styles.floatingContainer}>
-      {/* Menu Icon */}
       <div className={styles.menuIcon} onClick={() => setOpen(!open)}>
         ☰
       </div>
-
-      {/* Dropdown Menu */}
       {open && (
         <div className={styles.dropdownMenu}>
-          <a href="#" className={styles.dropdownItem}>
+          <Link href="/" className={styles.dropdownItem}>
             Home
-          </a>
-          <a href="#" className={styles.dropdownItem}>
-            About
-          </a>
-          <a href="#" className={styles.dropdownItem}>
+          </Link>
+          <Link href="/contact" className={styles.dropdownItem}>
             Contact
-          </a>
-          <a href="#" className={`btn btn-warning rounded-pill ${styles.ctaButton}`}>
-            Get Started
-          </a>
+          </Link>
         </div>
       )}
     </div>

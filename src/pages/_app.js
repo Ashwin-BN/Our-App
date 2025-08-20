@@ -1,13 +1,14 @@
 import "@/styles/brite.css";
 import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
+import { LoadingProvider } from "@/context/LoadingContext";
 
 export default function App({ Component, pageProps }) {
-  const session = pageProps.session || null; // <- ensure session is defined
-
   return (
-    <SessionProvider session={session}>
-      <Component {...pageProps} />
+    <SessionProvider session={pageProps.session}>
+      <LoadingProvider>
+        <Component {...pageProps} />
+      </LoadingProvider>
     </SessionProvider>
   );
 }
