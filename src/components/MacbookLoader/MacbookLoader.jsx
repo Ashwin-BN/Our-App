@@ -1,21 +1,24 @@
 "use client";
 
 import React from "react";
-import styles from "./MacbookLoader.module.css"; // Import as styles
+import styles from "./MacbookLoader.module.css";
 
 export default function MacbookLoader() {
   return (
     <div className={styles.macbook}>
       <div className={styles.inner}>
+        {/* Screen */}
         <div className={styles.screen}>
           <div className={styles.faceOne}>
             <div className={styles.camera}></div>
             <div className={styles.display}>
               <div className={styles.shade}></div>
+              <span className={styles.screenText}>MacBook Air</span>
             </div>
-            <span>MacBook Air</span>
           </div>
         </div>
+
+        {/* Mac body */}
         <div className={styles.macbody}>
           <div className={styles.faceOne}>
             <div className={styles.touchpad}></div>
