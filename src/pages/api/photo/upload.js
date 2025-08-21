@@ -3,7 +3,7 @@ import cloudinary from "@/lib/cloudinary";
 import { PrismaClient } from "@prisma/client";
 
 export const config = {
-  api: { bodyParser: false }, // required for formidable
+  api: { bodyParser: false },
 };
 
 const prisma = new PrismaClient();
@@ -13,26 +13,42 @@ export default async function handler(req, res) {
 
   const form = formidable({ multiples: false });
 
-  form.parse(req, async (err, fields, files) => {
-    if (err) return res.status(500).json({ error: "Upload error" });
-
-    try {
-      const file = files.file[0]; // uploaded photo
-      const result = await cloudinary.uploader.upload(file.filepath, {
-        folder: "ourapp/albums",
+  try {
+    const { fields, files } = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) reject(err);
+        else resolve({ fields, files });
       });
+    });
 
-      const photo = await prisma.photo.create({
-        data: {
-          url: result.secure_url,
-          userId: fields.userId,   // pass from frontend
-          albumId: fields.albumId || null,
-        },
-      });
+    const uploadedFile = files.file;
+    if (!uploadedFile) return res.status(400).json({ error: "No file uploaded" });
 
-      res.status(200).json(photo);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  });
+    const fileObj = Array.isArray(uploadedFile) ? uploadedFile[0] : uploadedFile;
+
+    // Make sure userId is a string
+    const userId = Array.isArray(fields.userId) ? fields.userId[0] : fields.userId;
+    const albumId = fields.albumId ? (Array.isArray(fields.albumId) ? fields.albumId[0] : fields.albumId) : null;
+
+    if (!userId) return res.status(400).json({ error: "userId is required" });
+
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(fileObj.filepath, {
+      folder: "ourapp/albums",
+    });
+
+    // Save in DB
+    const photo = await prisma.photo.create({
+      data: {
+        url: result.secure_url,
+        userId,
+        albumId,
+      },
+    });
+
+    res.status(200).json(photo);
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ error: err.message });
+  }
 }
