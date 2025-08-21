@@ -28,12 +28,15 @@ export default function ProfileMenu({ user }) {
     <div ref={menuRef} className={styles.floatingContainer}>
       <div className={styles.menuIcon} onClick={() => setOpen(!open)}>
         <Image
-          src={user?.image || "/default-profile.png"}
-          alt="Profile"
-          width={40}
-          height={40}
-          className={styles.profilePic}
-        />
+  src={user?.image && user.image.trim() !== "" ? user.image : "/default-profile.png"}
+  alt="Profile"
+  width={40}
+  height={40}
+  className={styles.profilePic}
+  onError={(e) => {
+    e.currentTarget.src = "/default-profile.png"; // fallback if image fails to load
+  }}
+/>
       </div>
 
       {open && (

@@ -50,7 +50,16 @@ export default function VantaBackground({ children, options = {} }) {
   }, [vantaEffect, options]);
 
   return (
-    <div ref={vantaRef} style={{ width: "100vw", height: "100vh", position: "relative" }}>
+    <div ref={vantaRef} 
+    style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: 0,
+      }}
+      >
       {children}
     </div>
   );
