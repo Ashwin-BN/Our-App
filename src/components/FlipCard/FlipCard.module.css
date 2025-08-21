@@ -1,0 +1,100 @@
+.flipCard {
+  background-color: transparent;
+  width: 220px;
+  height: 300px;
+  perspective: 1000px;
+  border-radius: 15px;
+}
+
+.flipCardInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flipCard:hover .flipCardInner {
+  transform: rotateY(180deg);
+}
+
+.flipCardFront,
+.flipCardBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: white;
+}
+
+.flipCardFront {
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 1rem;
+}
+
+.albumTitle {
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-align: center;
+  color: white;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+}
+
+.flipCardBack {
+  transform: rotateY(180deg);
+  background-color: #333;
+  cursor: pointer;
+  position: relative;
+}
+
+.slidePhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.emptyBack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #fff;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(270deg, #d7263d, #ff4f5a, #ff9919, #d7263d);
+  background-size: 600% 600%;
+  animation: gradientFlow 8s ease infinite;
+  border-radius: 15px;
+  text-align: center;
+  padding: 1rem;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.slideCounter {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  background: rgba(0,0,0,0.4);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #fff;
+}

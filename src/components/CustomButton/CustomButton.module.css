@@ -1,0 +1,54 @@
+.custom-btn {
+  position: relative;
+  padding: 12px 24px;
+  border-radius: 7px;
+  border: 2px solid var(--cherry-red); /* strong border */
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: rgba(255, 197, 197, 0.85); /* clear cherry red base */
+  color: #000000;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* subtle shadow to separate from background */
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+}
+
+.custom-btn:hover {
+  background: linear-gradient(145deg, var(--cherry-red), var(--cherry-red-light));
+  box-shadow: 0 0 30px 6px rgba(215, 38, 61, 0.6);
+  transform: translateY(-2px);
+  transition: all 0.25s ease-out;
+  color: #ffffff;
+}
+
+.custom-btn:hover::before {
+  animation: shine 0.5s linear;
+}
+
+.custom-btn::before {
+  content: "";
+  display: block;
+  width: 0px;
+  height: 86%;
+  position: absolute;
+  top: 7%;
+  left: 0%;
+  opacity: 0;
+  background: #fff;
+  box-shadow: 0 0 50px 30px #fff;
+  transform: skewX(-20deg);
+}
+
+@keyframes shine {
+  from { opacity: 0; left: 0%; }
+  50%  { opacity: 1; }
+  to   { opacity: 0; left: 100%; }
+}
+
+.custom-btn:active {
+  box-shadow: 0 0 0 0 transparent;
+  transform: translateY(0px) scale(0.97);
+  transition: transform 0.15s ease;
+}
