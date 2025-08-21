@@ -1,60 +1,130 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Modal from "@/components/Modal/Modal"; // Use your existing Modal component
+import styles from "@/styles/Album.module.css";
 
-export default function AlbumForm({ userId, onAlbumCreated }) {
+export default function AlbumForm({ 
+  userId, 
+  albumData = null, 
+  onSubmit, 
+  title = "Create Album" 
+}) {
   const [form, setForm] = useState({ name: "", description: "", cover: "" });
+  const [showCoverModal, setShowCoverModal] = useState(false);
+  const [userPhotos, setUserPhotos] = useState([]);
+
+  // Initialize form if editing
+  useEffect(() => {
+    if (albumData) {
+      setForm({
+        name: albumData.name || "",
+        description: albumData.description || "",
+        cover: albumData.cover || "",
+      });
+    }
+  }, [albumData]);
+
+  // Fetch user photos
+  useEffect(() => {
+    if (!userId) return;
+    fetch(`/api/photo/user/${userId}`)
+      .then((res) => res.json())
+      .then(setUserPhotos)
+      .catch(console.error);
+  }, [userId]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleCoverSelect = (url) => {
+    setForm({ ...form, cover: url });
+    setShowCoverModal(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/album", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, userId }),
-    });
-    const data = await res.json();
-    if (res.ok) {
-      onAlbumCreated?.(data);
-      setForm({ name: "", description: "", cover: "" });
+    if (typeof onSubmit === "function") {
+      await onSubmit(form);
     } else {
-      alert(data.error || "Error creating album");
+      console.error("AlbumForm: onSubmit prop is missing or not a function");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded-lg space-y-3">
-      <input
-        type="text"
-        name="name"
-        placeholder="Album Name"
-        value={form.name}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-        required
-      />
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={form.description}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-      />
-      <input
-        type="text"
-        name="cover"
-        placeholder="Cover Image URL (optional)"
-        value={form.cover}
-        onChange={handleChange}
-        className="w-full border p-2 rounded"
-      />
-      <button
-        type="submit"
-        className="bg-green-500 text-white px-4 py-2 rounded"
-      >
-        Create Album
-      </button>
-    </form>
+    <div className={styles.albumFormWrapper}>
+      <h3>{title}</h3>
+      <form onSubmit={handleSubmit} className={styles.albumForm}>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}>Album Name</label>
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            className={styles.formInput}
+            required
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}>Description</label>
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            className={styles.formInput}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}>Cover Image</label>
+          <div className={styles.coverPicker}>
+            {form.cover ? (
+              <img src={form.cover} alt="Cover" className={styles.coverPreview} />
+            ) : (
+              <span>No cover selected</span>
+            )}
+            <button
+              type="button"
+              className={styles.selectCoverBtn}
+              onClick={() => setShowCoverModal(true)}
+            >
+              Select Cover
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" className="btn btn-cherry">
+          {albumData ? "Save Changes" : "Create Album"}
+        </button>
+      </form>
+
+      {/* Cover selection modal */}
+      {showCoverModal && (
+        <Modal isOpen={showCoverModal} onClose={() => setShowCoverModal(false)}>
+          <h4>Select Cover Image</h4>
+          <div className={styles.coverGridScrollable}>
+            {userPhotos.length ? (
+              userPhotos.map((photo) => (
+                <img
+                  key={photo.id}
+                  src={photo.url}
+                  alt="cover"
+                  className={styles.coverOption}
+                  onClick={() => handleCoverSelect(photo.url)}
+                />
+              ))
+            ) : (
+              <p>No uploaded photos available</p>
+            )}
+          </div>
+          <button 
+            onClick={() => setShowCoverModal(false)} 
+            className="btn btn-cherry mt-2"
+          >
+            Close
+          </button>
+        </Modal>
+      )}
+    </div>
   );
 }
