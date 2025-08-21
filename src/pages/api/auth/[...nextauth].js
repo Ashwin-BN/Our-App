@@ -116,10 +116,13 @@ export const authOptions = {
         }
       }
 
+      if (user) token.id = user.id;
+
       return token;
     },
 
     async session({ session, token }) {
+      session.user.id = token.id;
       session.user.hasPassword = token.hasPassword;
       if (token.accessToken) {
         session.accessToken = token.accessToken;
