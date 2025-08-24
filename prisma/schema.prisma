@@ -15,17 +15,58 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?   // for Credentials login
+
   accounts      Account[] @relation("UserAccounts")
   sessions      Session[] @relation("UserSessions")
   photos        Photo[]   @relation("UserPhotos")
   albums        Album[]   @relation("UserAlbums")
+
+  // ---------- PARTNER (one-to-one) ----------
+  partnerId     String?   @unique @db.ObjectId
+  partner       User?     @relation("PartnerRelation", fields: [partnerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  partnerOf     User?     @relation("PartnerRelation")
+
+  // ---------- FRIENDS (many-to-many via Friend table) ----------
+  friendsSent     Friend[] @relation("UserFriends")
+  friendsReceived Friend[] @relation("FriendOfUser")
+
+    partnerRequestsSent     PartnerRequest[] @relation("PartnerRequestSent")
+  partnerRequestsReceived PartnerRequest[] @relation("PartnerRequestReceived")
+
 }
+
+// ----------------- FRIEND LINK TABLE -----------------
+model Friend {
+  id       String @id @map("_id") @default(auto()) @db.ObjectId
+
+  // User who sent/requested
+  user     User   @relation("UserFriends", fields: [userId], references: [id])
+  userId   String @db.ObjectId
+
+  // The friend user
+  friend   User   @relation("FriendOfUser", fields: [friendId], references: [id])
+  friendId String @db.ObjectId
+
+  status   String @default("pending") // pending, accepted
+  createdAt DateTime @default(now())
+}
+
+model PartnerRequest {
+  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+  fromUser   User     @relation("PartnerRequestSent", fields: [fromUserId], references: [id])
+  fromUserId String   @db.ObjectId
+  toUser     User     @relation("PartnerRequestReceived", fields: [toUserId], references: [id])
+  toUserId   String   @db.ObjectId
+  status     String   @default("pending") // pending, accepted, rejected
+  createdAt  DateTime @default(now())
+}
+
 
 // ----------------- ACCOUNT -----------------
 model Account {
   id                 String  @id @map("_id") @default(auto()) @db.ObjectId
   userId             String  @db.ObjectId
-  user               User    @relation("UserAccounts", fields: [userId], references: [id])
+  user               User    @relation("UserAccounts", fields: [userId], references: [id], onUpdate: NoAction)
   type               String
   provider           String
   providerAccountId  String
@@ -45,7 +86,7 @@ model Session {
   id           String   @id @map("_id") @default(auto()) @db.ObjectId
   sessionToken String   @unique
   userId       String   @db.ObjectId
-  user         User     @relation("UserSessions", fields: [userId], references: [id])
+  user         User     @relation("UserSessions", fields: [userId], references: [id], onUpdate: NoAction)
   expires      DateTime
 }
 
@@ -54,10 +95,11 @@ model Photo {
   id        String   @id @map("_id") @default(auto()) @db.ObjectId
   url       String
   userId    String   @db.ObjectId
-  user      User     @relation("UserPhotos", fields: [userId], references: [id])
+  user      User     @relation("UserPhotos", fields: [userId], references: [id], onUpdate: NoAction)
   albumId   String?  @db.ObjectId
-  album     Album?   @relation("AlbumPhotos", fields: [albumId], references: [id])
+  album     Album?   @relation("AlbumPhotos", fields: [albumId], references: [id], onUpdate: NoAction)
   createdAt DateTime @default(now())
+  favourite Boolean  @default(false)
 }
 
 // ----------------- ALBUM -----------------
@@ -67,7 +109,7 @@ model Album {
   description String?
   cover       String?
   userId      String   @db.ObjectId
-  user        User     @relation("UserAlbums", fields: [userId], references: [id])
+  user        User     @relation("UserAlbums", fields: [userId], references: [id], onUpdate: NoAction)
   photos      Photo[]  @relation("AlbumPhotos")
   createdAt   DateTime @default(now())
 }
