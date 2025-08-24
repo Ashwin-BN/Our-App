@@ -13,30 +13,34 @@
   max-width: 90%;
   background: #fff;
   border-radius: 16px;
-  padding: 2rem;
+  padding: 2rem; /* uniform padding */
   position: relative;
   box-shadow: 0 12px 40px rgba(0,0,0,0.25);
   animation: fadeInUp 0.3s ease;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* stretch child forms */
+  text-align: left;     /* ensure text inside forms is left-aligned */
 }
 
 .closeBtn {
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 15px;
+  right: 20px;
   background: transparent;
   border: none;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   cursor: pointer;
   color: #555;
+  transition: color 0.2s;
+}
+
+.closeBtn:hover {
+  color: var(--cherry-red);
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

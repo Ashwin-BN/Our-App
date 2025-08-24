@@ -1,95 +1,128 @@
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
+  inset: 0;
+  background: rgba(0,0,0,0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  backdrop-filter: blur(4px);
 }
 
-.modalContent {
-  position: relative;
-  max-width: 85vw;
-  max-height: 85vh;
+.modalWindow {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  max-width: 1200px;
+  height: 80vh;
+  max-height: 800px;
+  background: var(--text-dark);
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+
+.windowHeader {
+  height: 45px;
+  background: #222;
+  color: var(--text-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.closeBtn:hover { color: var(--cherry-red); }
+
+.photoContainer {
+  flex: 1;
+  background: #111;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .photo {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+  transition: transform 0.2s ease;
 }
 
 .navBtn {
   position: absolute;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border: none;
-  font-size: 1.4rem;
-  padding: 0.3rem 0.6rem;
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.prevBtn {
-  left: 10px;
   top: 50%;
   transform: translateY(-50%);
-}
-
-.nextBtn {
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.deleteBtn,
-.closeBtn {
-  position: absolute;
-  background: var(--cherry-red);
+  background: rgba(0,0,0,0.5);
   color: #fff;
+  font-size: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   border: none;
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
-  font-weight: 500;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.navBtn:hover { background: rgba(0,0,0,0.8); }
+.prevBtn { left: -60px; }
+.nextBtn { right: -60px; }
+
+.infoBar {
+  height: 50px;
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-light);
+  padding: 0 1rem;
+}
+
+.zoomDelete {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.zoomDelete input[type="range"] {
+  width: 100px;
+  height: 1px;
+  accent-color: var(--white);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.zoomDelete span {
+  min-width: 35px;
+  text-align: right;
+  font-size: 0.9rem;
+  color: var(--text-light);
 }
 
 .deleteBtn {
-  bottom: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.95rem;
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
 }
-
-.closeBtn {
-  top: 10px;
-  right: 10px;
-  font-size: 1rem;
-}
-
-.deleteBtn:hover,
-.closeBtn:hover {
-  background: var(--cherry-red-light);
-}
-
-.counter {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #fff;
-  font-weight: 500;
-  font-size: 0.9rem;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 0.2rem 0.6rem;
-  border-radius: 8px;
+.deleteBtn:hover {
+  color: var(--cherry-red);
 }

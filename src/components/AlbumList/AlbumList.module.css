@@ -1,17 +1,19 @@
 /* ================= ALBUM GRID ================= */
 .albumGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* responsive min width */
-  gap: 1.5rem;
-  justify-items: stretch; /* stretch cards to fill column */
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* match flipCard width */
+  gap: 2rem; /* bigger spacing between cards */
+  justify-items: center; /* center cards in their column */
+  margin: 1rem auto; /* center grid in page */
   width: 100%;
-  max-width: 1200px; /* constrain grid width */
+  max-width: 1400px; /* allow more cards in large screens */
 }
 
 .albumGrid > * {
-  width: 100%; /* fill column */
+  width: 100%; /* let cards size themselves */
+  max-width: 240px; /* prevents stretching too much */
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {

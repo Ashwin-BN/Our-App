@@ -11,9 +11,13 @@ export default async function handler(req, res) {
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
-    res.status(200).json(photos);
+
+    const favourites = photos.filter((p) => p.favourite);
+
+    res.status(200).json({ all: photos, favourites });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 }
+

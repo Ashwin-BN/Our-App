@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Modal from "@/components/Modal/Modal"; // Use your existing Modal component
-import styles from "@/styles/Album.module.css";
+import Modal from "@/components/Modal/Modal";
+import styles from "@/styles/formShared.module.css";
 
 export default function AlbumForm({ 
   userId, 
@@ -51,9 +51,9 @@ export default function AlbumForm({
   };
 
   return (
-    <div className={styles.albumFormWrapper}>
-      <h3>{title}</h3>
+    <div className={styles.albumForm}>
       <form onSubmit={handleSubmit} className={styles.albumForm}>
+        <h2 className={styles.formHeading}>{title}</h2>
         <div className={styles.formGroup}>
           <label className={styles.formLabel}>Album Name</label>
           <input

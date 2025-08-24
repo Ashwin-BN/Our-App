@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import styles from "@/styles/Album.module.css";
+import styles from "@/styles/formShared.module.css";
 
 export default function UploadForm({ userId, onUploadComplete }) {
   const [file, setFile] = useState(null);
